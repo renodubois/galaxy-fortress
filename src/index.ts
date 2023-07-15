@@ -1,5 +1,5 @@
 import { Map } from "immutable";
-import { deployCard, initGameState } from "./state";
+import { deployCard, getCard, initGameState, useCardAction } from "./state";
 import type { Player, Sector, SectorNumber } from "./state";
 import { STARTER_CARDS, LEVEL_1_CARDS } from "./cards";
 
@@ -37,7 +37,6 @@ let state = initGameState([p1, p2]);
 // first things first, give players their rewards based on
 // turn order & assign starter cards (random level 1 card)
 
-console.log(state.players[0].cards.get(8)?.activeCardId);
-state = deployCard(state, state.players[0], LEVEL_1_CARDS[0]);
-console.log(state.players[0].cards.get(8)?.activeCardId);
+const player1 = state.players[0];
+state = useCardAction(state, player1, getCard(state.players[0].cards.get(1)?.activeCardId), "main");
 

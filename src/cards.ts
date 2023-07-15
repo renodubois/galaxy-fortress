@@ -1,13 +1,18 @@
-import type { Card } from "./state";
+import { modifyPlayer, modifyResource } from "./state";
+import type { Card, GameState, Player, StarterCard } from "./state";
 
-export const STARTER_CARDS: Card[] = [
+const addOneCredit = (state: GameState, player: Player) => {
+  return modifyResource(state, player, "credit", 1)
+}
+
+export const STARTER_CARDS: StarterCard[] = [
   {
     id: 1,
     name: "Starter Card 1",
     cost: 0,
     sector: 1,
     cubes: 0,
-    mainAction: null,
+    mainAction: addOneCredit,
     flipAction: null,
   },
   {
