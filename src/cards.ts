@@ -1,11 +1,11 @@
-import { modifyPlayer, modifyResource } from "./state";
-import type { Card, GameState, Player, StarterCard } from "./state";
+import type { Card, GameState, Player } from "./state";
+import { modifyResource } from "./state";
 
 const addOneCredit = (state: GameState, player: Player) => {
-  return modifyResource(state, player, "credit", 1)
-}
+  return modifyResource(state, player, "credit", 1);
+};
 
-export const STARTER_CARDS: StarterCard[] = [
+export const ALL_CARDS: Card[] = [
   {
     id: 1,
     name: "Starter Card 1",
@@ -14,6 +14,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: addOneCredit,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 4,
@@ -41,6 +44,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 5,
@@ -50,6 +54,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 6,
@@ -59,6 +64,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 7,
@@ -68,6 +74,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 8,
@@ -77,6 +84,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 9,
@@ -86,6 +94,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 10,
@@ -95,6 +104,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 11,
@@ -104,6 +114,7 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
   {
     id: 12,
@@ -113,10 +124,8 @@ export const STARTER_CARDS: StarterCard[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "STARTER",
   },
-];
-
-export const LEVEL_1_CARDS: Card[] = [
   {
     id: 13,
     name: "Test Card 1",
@@ -125,6 +134,7 @@ export const LEVEL_1_CARDS: Card[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "LEVEL_1",
   },
   {
     id: 14,
@@ -134,11 +144,6 @@ export const LEVEL_1_CARDS: Card[] = [
     cubes: 0,
     mainAction: null,
     flipAction: null,
+    source: "LEVEL_1",
   },
-];
-export const LEVEL_2_CARDS: Card[] = [
-];
-export const LEVEL_3_CARDS: Card[] = [
-];
-export const COLONY_CARDS: Card[] = [
 ];

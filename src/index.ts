@@ -1,21 +1,22 @@
 import { Map } from "immutable";
-import { deployCard, getCard, initGameState, useCardAction } from "./state";
-import type { Player, Sector, SectorNumber } from "./state";
-import { STARTER_CARDS, LEVEL_1_CARDS } from "./cards";
+import { ALL_CARDS } from "./cards";
+import type { Player } from "./state";
+import { activateSector, initGameState } from "./state";
 
 const createStarterDeck = (): Player["cards"] => {
-  const starterCards: [SectorNumber, Sector][] = STARTER_CARDS.map((c) => [
-    c.sector,
-    { activeCardId: c.id, flippedCardIds: [] },
-  ]);
-  return Map(starterCards);
+  return Map(
+    ALL_CARDS.filter((c) => c.source === "STARTER").map((c) => [
+      c.sector,
+      { activeCardId: c.id, flippedCardIds: [] },
+    ])
+  );
 };
 
 let p1: Player = {
   id: 1,
   name: "Reno",
   resources: {
-    credit: 0,
+    credit: 5,
     income: 0,
     vp: 0,
   },
@@ -25,7 +26,7 @@ const p2: Player = {
   id: 1,
   name: "Robert",
   resources: {
-    credit: 0,
+    credit: 5,
     income: 0,
     vp: 0,
   },
@@ -38,5 +39,7 @@ let state = initGameState([p1, p2]);
 // turn order & assign starter cards (random level 1 card)
 
 const player1 = state.players[0];
-state = useCardAction(state, player1, getCard(state.players[0].cards.get(1)?.activeCardId), "main");
-
+console.log(player1.name);
+console.log(player1.resources);
+state = activateSector(state, player1, 1, "main");
+console.log(state.players[0].resources);
