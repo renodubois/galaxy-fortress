@@ -19,6 +19,7 @@ export interface GameState {
     2: Deck;
     3: Deck;
   };
+  dice: [number, number];
   // shipyards: Card[] // Level 1, 2, 3
   // colonyCards: Card[] // the cards that cap off your sectors and get you VPs.
 }
@@ -38,8 +39,8 @@ export interface Card {
   sector: SectorNumber;
   source: CardSource;
   cubes: number; // this might be optional? only some cards can get cubes
-  mainAction: ((state: GameState, player: Player) => GameState) | null; // TODO: | null is temporary
-  flipAction: unknown;
+  mainAction?: (state: GameState, player: Player) => GameState;
+  flipAction?: (state: GameState, player: Player) => GameState;
 }
 
 export interface Level1Card extends Card {
@@ -121,7 +122,7 @@ export function setCurrentPlayer(
 }
 
 export function initGameState(players: Player[]): GameState {
-  let state = {
+  let state: GameState = {
     players: shuffle(players),
     activePlayer: players[0].id,
     currentPlayer: players[0].id,
@@ -131,15 +132,25 @@ export function initGameState(players: Player[]): GameState {
       2: makeDeck("LEVEL_2"),
       3: makeDeck("LEVEL_3"),
     },
+    dice: [1, 1],
   };
   // Some initial state modifications - starting cards & resources
   for (let i = 0; i < state.players.length; i++) {
-    const player = state.players[i];
-    if (i !== 0) {
+    // TODO(reno): extra credits/income if you don't go first.
+    if (i > 0) {
       switch (i) {
         case 1:
+          state = modifyResource(state, state.players[i], "credit", 1);
+          break;
+        case 2:
+          state = modifyResource(state, state.players[i], "credit", 2);
+          break;
+        default:
+          state = modifyResource(state, state.players[i], "income", 1);
       }
     }
+
+    const player = state.players[i];
 
     const [startingCard, newLevel1Deck] = drawFromDeck(state.shipyards[1]);
     console.log(
@@ -192,6 +203,10 @@ export function getCard(id: Card["id"]) {
   return card;
 }
 
+export function getCards(ids: Card["id"][]) {
+  return ALL_CARDS.filter((c) => ids.includes(c.id));
+}
+
 function drawFromDeck(deck: Deck): [Card, Deck] {
   const i = crypto.randomInt(deck.cards.length);
   const newCards = [...deck.cards];
@@ -203,6 +218,40 @@ export function getPlayerIndex(state: GameState, player: Player): number {
   return state.players.findIndex((p) => p.id === player.id);
 }
 
+export function createStarterDeck(): Player["cards"] {
+  return Map(
+    ALL_CARDS.filter((c) => c.source === "STARTER").map((c) => [
+      c.sector,
+      { activeCardId: c.id, flippedCardIds: [] },
+    ])
+  );
+}
+
+export function createTestGame() {
+  const p1: Player = {
+    id: 1,
+    name: "Reno",
+    resources: {
+      credit: 5,
+      income: 0,
+      vp: 0,
+    },
+    cards: createStarterDeck(),
+  };
+  const p2: Player = {
+    id: 2,
+    name: "Robert",
+    resources: {
+      credit: 5,
+      income: 0,
+      vp: 0,
+    },
+    cards: createStarterDeck(),
+  };
+
+  return initGameState([p1, p2]);
+}
+
 export function useCardAction(
   state: GameState,
   player: Player,
@@ -211,7 +260,12 @@ export function useCardAction(
 ): GameState {
   if (type === "main") {
     // TODO: make sure array len > 1 before doing this
-    return cards[0].mainAction!(state, player);
+    if (cards[0]?.mainAction) {
+      return cards[0].mainAction(state, player);
+    } else {
+      // TODO: no main action is a major problem
+      return state;
+    }
   } else {
     console.error("not implemented yet");
     return state;
@@ -224,19 +278,44 @@ export function activateSector(
   sector: SectorNumber,
   type: "main" | "flip"
 ): GameState {
-  switch (type) {
-    case "main":
-      const cardToActivate = getCard(
-        state.players[getPlayerIndex(state, player)].cards.get(sector)
-          ?.activeCardId!
-      );
-      return useCardAction(state, player, [cardToActivate], type);
-    case "flip":
-      // TODO: make getCard bulk or have a bulk getCards?
-      // const cardsToActivate = getCard(state.players[getPlayerIndex(state, player)].cards.get(sector)?.flippedCardIds);
-      console.error("Not implemented yet!");
-      return state;
+  if (type === "main") {
+    const cardId = player.cards.get(sector)?.activeCardId;
+    if (cardId) {
+      const card = getCard(cardId);
+      return useCardAction(state, player, [card], type);
+    } else {
+      throw new Error("no card found with id " + cardId);
+    }
+  } else {
+    // TODO: make getCard bulk or have a bulk getCards?
+    const cardIds = player.cards.get(sector)?.flippedCardIds;
+    if (cardIds) {
+      const cardsToActivate = getCards(cardIds);
+      useCardAction(state, player, cardsToActivate, type);
+    } else {
+      throw new Error("no cards found for flipped sector " + sector);
+    }
+    console.error("Not implemented yet!");
+    return state;
   }
+}
+
+export function rollDice(s: GameState): GameState {
+  return {
+    ...s,
+    dice: [randomInt(1, 7), randomInt(1, 7)],
+  };
+}
+
+export function doTurn(s: GameState): GameState {
+  // roll dice
+  s = rollDice(s);
+
+  // prompt activePlayer to make a choice as to what they want to do
+
+  // then, go through every other player and give them the choice to do flip actions
+  // re-assign activePlayer
+  return s;
 }
 
 export function shuffle<T>(items: T[]): T[] {
@@ -248,4 +327,3 @@ export function shuffle<T>(items: T[]): T[] {
   }
   return items;
 }
-

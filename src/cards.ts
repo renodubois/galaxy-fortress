@@ -2,7 +2,20 @@ import type { Card, GameState, Player } from "./state";
 import { modifyResource } from "./state";
 
 const addOneCredit = (state: GameState, player: Player) => {
-  return modifyResource(state, player, "credit", 1);
+  return addResource("credit", 1, state, player);
+};
+
+const addOneIncome = (s: GameState, p: Player) => {
+  return addResource("income", 1, s, p);
+};
+
+const addResource = (
+  type: keyof Player["resources"],
+  num: number,
+  state: GameState,
+  player: Player
+) => {
+  return modifyResource(state, player, type, num);
 };
 
 export const ALL_CARDS: Card[] = [
@@ -13,7 +26,7 @@ export const ALL_CARDS: Card[] = [
     sector: 1,
     cubes: 0,
     mainAction: addOneCredit,
-    flipAction: null,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -22,8 +35,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 2,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneCredit,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -32,8 +45,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 3,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneCredit,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -42,8 +55,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 4,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneCredit,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -52,8 +65,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 5,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneCredit,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -62,8 +75,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 6,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneCredit,
+    flipAction: addOneCredit,
     source: "STARTER",
   },
   {
@@ -72,8 +85,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 7,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: (s, p) => addResource("credit", 3, s, p),
+    flipAction: (s, p) => addResource("credit", 2, s, p),
     source: "STARTER",
   },
   {
@@ -82,8 +95,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 8,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: (s, p) => addResource("credit", 3, s, p),
+    flipAction: (s, p) => addResource("credit", 2, s, p),
     source: "STARTER",
   },
   {
@@ -92,8 +105,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 9,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneIncome,
+    flipAction: (s, p) => addResource("credit", 3, s, p),
     source: "STARTER",
   },
   {
@@ -102,8 +115,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 10,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneIncome,
+    flipAction: (s, p) => addResource("credit", 3, s, p),
     source: "STARTER",
   },
   {
@@ -112,8 +125,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 11,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneIncome,
+    flipAction: (s, p) => addResource("credit", 4, s, p),
     source: "STARTER",
   },
   {
@@ -122,8 +135,8 @@ export const ALL_CARDS: Card[] = [
     cost: 0,
     sector: 12,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: addOneIncome,
+    flipAction: (s, p) => addResource("credit", 5, s, p),
     source: "STARTER",
   },
   {
@@ -132,8 +145,8 @@ export const ALL_CARDS: Card[] = [
     cost: 3,
     sector: 8,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: undefined,
+    flipAction: undefined,
     source: "LEVEL_1",
   },
   {
@@ -142,8 +155,8 @@ export const ALL_CARDS: Card[] = [
     cost: 5,
     sector: 12,
     cubes: 0,
-    mainAction: null,
-    flipAction: null,
+    mainAction: undefined,
+    flipAction: undefined,
     source: "LEVEL_1",
   },
 ];
